@@ -40,11 +40,13 @@ def write_urls(file_path, urls):
 
 
 # Function to generate URLs and write them to a file
-def generate_urls(file_path):
+def generate_urls(file_path, start_landmark_id, process_range):
     base_url = "https://www.openrice.com/en/hongkong/restaurants?regionId=1&landmarkId={}&tabIndex=0"
 
     with open(file_path, "w") as file:
-        for landmark_id in range(35281, 35300):  # Adjust landmark ID range as necessary
+        for landmark_id in range(
+            int(start_landmark_id), int(start_landmark_id) + int(process_range)
+        ):  # Adjust landmark ID range as necessary
             url = base_url.format(landmark_id)
             file.write(url + "\n")
     logging.info(f"URLs generated and saved to {file_path}.")
@@ -182,8 +184,11 @@ def scrape_openrice(url, data):
 def main(generate_new_urls=False):
     url_file = "url.txt"
 
+    start_landmark_id = input("Enter the start landmark ID: ")
+    process_range = input("Enter the range of landmark IDs: ")
+
     if generate_new_urls:
-        generate_urls(url_file)
+        generate_urls(url_file, start_landmark_id, process_range)
 
     start_time = time.time()
     logging.info("Scraping started.")
@@ -212,7 +217,7 @@ def main(generate_new_urls=False):
     # Generate a file name with date-time information
     if data:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        csv_file = f"restaurants_{timestamp}.csv"
+        csv_file = f"./output/restaurants_{str(int(start_landmark_id)+int(process_range))}_{timestamp}.csv"
 
         # Write data to a CSV file
         with open(csv_file, "w", newline="", encoding="utf-8") as file:
